@@ -61,3 +61,20 @@ r <- D %*% S %*% D
 rownames(r) <- colnames(r) <- colnames(X)
 r
 
+xbar_test <- colMeans(swiss_trans)
+S_test     <- cov(swiss_trans)
+r_test     <- cor(swiss_trans)
+
+xbar_test
+S_test
+r_test
+
+all.equal(as.vector(xbar), unname(xbar_test))
+all.equal(S, S_test)
+all.equal(r, r_test)
+
+gen_var <- det(S)
+gen_var
+
+total_var <- sum(diag(S))
+total_var
