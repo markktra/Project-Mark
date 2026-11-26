@@ -1,1 +1,63 @@
+#----------------------- Lab 2 ---------------------------------------
+library(readxl)
+companies <- read_excel("C:/Users/User/Downloads/companies.xlsx")
+View(companies)
+
+x_bar <- colMeans(companies[, 2:4])
+x_bar
+
+S <- cov(companies[, 2:4])
+S
+
+r <- cor(companies[, 2:4])
+r
+#-----------------------------2----------------------------------------
+library(MVN)
+data_num <- companies[, -1]
+multivariate_diagnostic_plot(data_num)
+library(mvnormtest)
+mshapiro.test(t(data_num))
+
+outliers <- mv_outlier(companies[, -1])
+outliers$outlier
+outliers$qq_outlier_plot
+outliers$newData
+#--------------------------3--------------------------------------------
+library(datasets)
+data(swiss)
+swiss_new <- swiss[, -c(1, 6)]
+head(swiss_new)
+
+outliers_swiss <- mv_outlier(swiss_new)
+outliers_swiss$outlier
+outliers_swiss$qq_outlier_plot
+swiss_clean <- outliers_swiss$newData
+
+multivariate_diagnostic_plot(swiss_clean)
+mshapiro.test(t(swiss_clean))
+
+transform_opt <- power_transform(swiss_clean, family = "bcPower", type = "optimal")
+transform_opt$lambda
+
+swiss_trans <- transform_opt$data
+swiss_trans
+
+multivariate_diagnostic_plot(swiss_trans)
+new_mvn_swiss <- mvn(swiss_trans)
+new_mvn_swiss$multivariate_normality
+#---------------------------4-----------------------------------------------
+X <- as.matrix(swiss_trans)
+n <- nrow(X)
+one <- matrix(1, nrow = n, ncol = 1)
+
+xbar <- (1 / n) * (t(X) %*% one)
+xbar
+
+S <- (1 / (n - 1)) * (t(X) %*% X - n * (x_bar %*% t(x_bar)))
+S
+
+D <- diag(1 / sqrt(diag(S)))
+r <- D %*% S %*% D
+rownames(r) <- colnames(r) <- colnames(X)
+r
 
